@@ -21,6 +21,10 @@ class User extends Authenticatable
         'STAFF' => 3
     ];
 
+    const IS_ACTIVE = [
+        'UNACTIVE' => 0,
+        'ACTIVE' => 1,
+    ];
 
     /**
      * The attributes that are mass assignable.
