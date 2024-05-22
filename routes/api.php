@@ -21,6 +21,8 @@ Route::prefix('user')->group(function () {
             Route::post('refresh-token', [AuthController::class, 'refreshToken']);
             Route::post('logout', [AuthController::class, 'logout']);
             Route::get('me', [AuthController::class, 'me']);
+            Route::get('email/verify/{id}/{hash}', [AuthController::class, 'verify'])->name('verification.verify');
+            Route::post('email/resend', [AuthController::class, 'resendVerificationEmail'])->name('verification.resend');
         });
     });
 

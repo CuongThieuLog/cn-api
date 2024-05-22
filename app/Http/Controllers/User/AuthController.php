@@ -7,11 +7,11 @@ use App\Http\Controllers\BaseController;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Services\User\AuthService;
-use App\Mail\RegisterMail;
 use Carbon\Carbon;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 
 class AuthController extends BaseController
 {
@@ -39,18 +39,9 @@ class AuthController extends BaseController
             'user' => $user,
         ];
 
-        $response = $this->sendResponse($success, 'User registered successfully.');
+        event(new Registered($user));
 
-        $mailData = [
-            'title' => 'Mail from ItSolutionStuff.com',
-            'body' => 'This is for testing email using smtp.'
-        ];
-
-        if ($response) {
-            Mail::to($success['user']['email'])->send(new RegisterMail($mailData));
-        }
-
-        return $response;
+        return $this->sendResponse($success, 'User registered successfully. Please check your email to verify your account.');
     }
 
     public function login(LoginRequest $request): JsonResponse
@@ -88,6 +79,10 @@ class AuthController extends BaseController
     {
         $user = $request->user();
 
+        if (!$user) {
+            return $this->sendError('Unauthorized.', ['error' => 'User not authenticated.'], 401);
+        }
+
         return $this->sendResponse($user, 'User retrieved successfully.');
     }
 
@@ -95,5 +90,41 @@ class AuthController extends BaseController
     {
         $accessToken = $request->user()->createToken('access_token', [TokenAbility::ACCESS_API->value], Carbon::now()->addMinutes(config('sanctum.ac_expiration')));
         return response(['message' => "Token generated", 'token' => $accessToken->plainTextToken]);
+    }
+
+    public function verify(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user) {
+            return $this->sendError('Unauthorized.', ['error' => 'User not authenticated.'], 401);
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            return $this->sendResponse([], 'Email already verified.');
+        }
+
+        if ($user->markEmailAsVerified()) {
+            event(new Verified($user));
+        }
+
+        return $this->sendResponse([], 'Email has been verified.');
+    }
+
+    public function resendVerificationEmail(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user) {
+            return $this->sendError('Unauthorized.', ['error' => 'User not authenticated.'], 401);
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            return $this->sendResponse([], 'Email already verified.');
+        }
+
+        $user->sendEmailVerificationNotification();
+
+        return $this->sendResponse([], 'Verification email sent.');
     }
 }

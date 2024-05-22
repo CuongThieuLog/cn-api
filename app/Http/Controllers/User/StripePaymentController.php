@@ -18,15 +18,15 @@ class StripePaymentController extends Controller
     public function stripePost(Request $request): RedirectResponse
     {
         Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
-      
-        Stripe\Charge::create ([
-                "amount" => 10 * 100,
-                "currency" => "usd",
-                "source" => $request->stripeToken,
-                "description" => "Test payment from itsolutionstuff.com." 
+
+        Stripe\Charge::create([
+            "amount" => 10 * 100,
+            "currency" => "usd",
+            "source" => $request->stripeToken,
+            "description" => "Test payment from ttc."
         ]);
-                
+
         return back()
-                ->with('success', 'Payment successful!');
+            ->with('success', 'Payment successful!');
     }
 }
