@@ -3,6 +3,7 @@
 use App\Http\Controllers\User\AuthController;
 use App\Http\Controllers\User\FacebookController;
 use App\Http\Controllers\User\GoogleController;
+use App\Http\Controllers\User\NotificationController;
 use App\Http\Controllers\User\StripePaymentController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +31,9 @@ Route::prefix('user')->group(function () {
         Route::get('stripe', [StripePaymentController::class, 'stripe']);
         Route::post('stripe', [StripePaymentController::class, 'stripePost'])->name('stripe.post');
     });
+
+    Route::get('push-notification', [NotificationController::class, 'index']);
+    Route::post('send-notification', [NotificationController::class, 'sendNotification']);
 });
 
 Route::prefix('admin')->group(function () {
