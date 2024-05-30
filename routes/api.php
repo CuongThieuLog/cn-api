@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\MovieFormatController;
+use App\Http\Controllers\Admin\MovieTypeController;
 use App\Http\Controllers\User\AuthController;
 use App\Http\Controllers\User\FacebookController;
 use App\Http\Controllers\User\GoogleController;
@@ -33,4 +35,8 @@ Route::prefix('user')->group(function () {
 });
 
 Route::prefix('admin')->group(function () {
+    Route::middleware(['auth:sanctum', 'role:admin,manager,staff'])->group(function () {
+        Route::apiResource('movie-type', MovieTypeController::class);
+        Route::apiResource('movie-format', MovieFormatController::class);
+    });
 });

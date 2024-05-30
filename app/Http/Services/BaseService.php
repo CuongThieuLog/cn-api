@@ -25,20 +25,6 @@ abstract class BaseService
         $this->query = $this->model->query();
     }
 
-    public function show(Request $request, $id)
-    {
-        $item = $this->query->find($id);
-        
-        if (!$item) {
-            return $this -> sendError();
-        }
-
-        return response()->json([
-            'success' => true,
-            'data' => $item,
-        ], StatusCode::HTTP_OK);
-    }
-
     public function destroy(Request $request, $id, $isForceDelete = false)
     {
 
@@ -51,7 +37,7 @@ abstract class BaseService
         return response()->json([
             'success' => true,
             'message' => 'Deleted successfully'
-        ], StatusCode::HTTP_NO_CONTENT);
+        ], StatusCode::HTTP_OK);
     }
 
     private function _softDelete(Request $request, $id)
