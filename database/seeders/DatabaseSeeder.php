@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             MovieTypeSeeder::class,
             MovieFormatSeeder::class,
+            MovieSeeder::class,
         ]);
     }
 }

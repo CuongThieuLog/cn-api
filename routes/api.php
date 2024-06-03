@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\MovieController;
 use App\Http\Controllers\Admin\MovieFormatController;
 use App\Http\Controllers\Admin\MovieTypeController;
 use App\Http\Controllers\User\AuthController;
+use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\User\FacebookController;
 use App\Http\Controllers\User\GoogleController;
 use App\Http\Controllers\User\StripePaymentController;
@@ -35,7 +37,18 @@ Route::prefix('user')->group(function () {
 });
 
 Route::prefix('admin')->group(function () {
+    Route::prefix('auth')->group(function () {
+        Route::post('login', [AdminAuthController::class, 'login']);
+
+        Route::middleware('auth:sanctum')->group(function () {
+            Route::post('refresh-token', [AdminAuthController::class, 'refreshToken']);
+            Route::post('logout', [AdminAuthController::class, 'logout']);
+            Route::get('me', [AdminAuthController::class, 'me']);
+        });
+    });
+    
     Route::middleware(['auth:sanctum', 'role:admin,manager,staff'])->group(function () {
+        Route::apiResource('movie', MovieController::class);
         Route::apiResource('movie-type', MovieTypeController::class);
         Route::apiResource('movie-format', MovieFormatController::class);
     });
