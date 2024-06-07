@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\MovieFormatController;
 use App\Http\Controllers\Admin\MovieTypeController;
 use App\Http\Controllers\User\AuthController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
+use App\Http\Controllers\Admin\PersonController;
+use App\Http\Controllers\Admin\PersonMovieController;
 use App\Http\Controllers\User\FacebookController;
 use App\Http\Controllers\User\GoogleController;
 use App\Http\Controllers\User\StripePaymentController;
@@ -51,5 +53,7 @@ Route::prefix('admin')->group(function () {
         Route::apiResource('movie', MovieController::class);
         Route::apiResource('movie-type', MovieTypeController::class);
         Route::apiResource('movie-format', MovieFormatController::class);
+        Route::apiResource('person', PersonController::class);
+        Route::apiResource('person-movie', PersonMovieController::class);
     });
 });
