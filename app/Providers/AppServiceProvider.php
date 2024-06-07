@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Repositories\InformationRepository;
+use App\Repositories\Interfaces\InformationInterface;
 use App\Repositories\Interfaces\MovieFormatInterface;
 use App\Repositories\Interfaces\MovieInterface;
 use App\Repositories\Interfaces\MovieTypeInterface;
@@ -26,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(MovieInterface::class, MovieRepository::class);
         $this->app->bind(PersonInterface::class, PersonRepository::class);
         $this->app->bind(PersonMovieInterface::class, PersonMovieRepository::class);
+        $this->app->bind(InformationInterface::class, InformationRepository::class);
     }
 
     /**
