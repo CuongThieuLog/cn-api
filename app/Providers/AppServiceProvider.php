@@ -16,6 +16,7 @@ use App\Repositories\Interfaces\PersonMovieInterface;
 use App\Repositories\Interfaces\ScheduleInterface;
 use App\Repositories\Interfaces\ScreenInterface;
 use App\Repositories\Interfaces\SeatInterface;
+use App\Repositories\Interfaces\TicketInterface;
 use App\Repositories\MovieFormatRepository;
 use App\Repositories\MovieRepository;
 use App\Repositories\MovieTypeRepository;
@@ -24,6 +25,7 @@ use App\Repositories\PersonRepository;
 use App\Repositories\ScheduleRepository;
 use App\Repositories\ScreenRepository;
 use App\Repositories\SeatRepository;
+use App\Repositories\TicketRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -44,6 +46,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(FoodInterface::class, FoodRepository::class);
         $this->app->bind(SeatInterface::class, SeatRepository::class);
         $this->app->bind(ScheduleInterface::class, ScheduleRepository::class);
+        $this->app->bind(TicketInterface::class, TicketRepository::class);
     }
 
     /**
