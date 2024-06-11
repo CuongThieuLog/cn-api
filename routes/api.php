@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\FoodController;
 use App\Http\Controllers\Admin\PersonController;
 use App\Http\Controllers\Admin\PersonMovieController;
 use App\Http\Controllers\Admin\ScreenController;
+use App\Http\Controllers\Admin\SeatController;
 use App\Http\Controllers\User\FacebookController;
 use App\Http\Controllers\User\GoogleController;
 use App\Http\Controllers\User\StripePaymentController;
@@ -61,5 +62,6 @@ Route::prefix('admin')->group(function () {
         Route::apiResource('cinema', CinemaController::class);
         Route::apiResource('screen', ScreenController::class);
         Route::apiResource('food', FoodController::class);
+        Route::apiResource('seat', SeatController::class);
     });
 });

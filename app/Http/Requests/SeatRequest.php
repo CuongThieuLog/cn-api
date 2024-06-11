@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-class FoodRequest extends BaseRequest
+class SeatRequest extends BaseRequest
 {
     public function authorize(): bool
     {
@@ -13,10 +13,11 @@ class FoodRequest extends BaseRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'description' => 'require|string',
-            'price' => 'required|numeric|min:0',
-            'image' => 'required|string|max:255',
+            'row' => 'required|integer|min:1',
+            'column' => 'required|integer|min:1',
+            'seat_type' => 'required|string|max:255',
             'is_active' => 'boolean',
+            'screen_id' => 'required|exists:screen,id',
         ];
     }
 }
