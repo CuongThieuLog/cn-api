@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\MovieTypeController;
 use App\Http\Controllers\User\AuthController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\CinemaController;
+use App\Http\Controllers\Admin\FoodController;
 use App\Http\Controllers\Admin\PersonController;
 use App\Http\Controllers\Admin\PersonMovieController;
 use App\Http\Controllers\Admin\ScreenController;
@@ -59,5 +60,6 @@ Route::prefix('admin')->group(function () {
         Route::apiResource('person-movie', PersonMovieController::class);
         Route::apiResource('cinema', CinemaController::class);
         Route::apiResource('screen', ScreenController::class);
+        Route::apiResource('food', FoodController::class);
     });
 });
