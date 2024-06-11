@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\MovieTypeController;
 use App\Http\Controllers\User\AuthController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\CinemaController;
+use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\FoodController;
 use App\Http\Controllers\Admin\PersonController;
 use App\Http\Controllers\Admin\PersonMovieController;
@@ -71,5 +72,6 @@ Route::prefix('admin')->group(function () {
         Route::apiResource('ticket', TicketController::class);
         Route::apiResource('ticket-food', TicketFoodController::class);
         Route::apiResource('ticket-seat', TicketSeatController::class);
+        Route::apiResource('comment', CommentController::class);
     });
 });

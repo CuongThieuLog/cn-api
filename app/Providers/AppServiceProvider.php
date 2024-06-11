@@ -3,9 +3,11 @@
 namespace App\Providers;
 
 use App\Repositories\CinemaRepository;
+use App\Repositories\CommentRepository;
 use App\Repositories\FoodRepository;
 use App\Repositories\InformationRepository;
 use App\Repositories\Interfaces\CinemaInterface;
+use App\Repositories\Interfaces\CommentInterface;
 use App\Repositories\Interfaces\FoodInterface;
 use App\Repositories\Interfaces\InformationInterface;
 use App\Repositories\Interfaces\MovieFormatInterface;
@@ -53,6 +55,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TicketInterface::class, TicketRepository::class);
         $this->app->bind(TicketFoodInterface::class, TicketFoodRepository::class);
         $this->app->bind(TicketSeatInterface::class, TicketSeatRepository::class);
+        $this->app->bind(CommentInterface::class, CommentRepository::class);
     }
 
     /**
