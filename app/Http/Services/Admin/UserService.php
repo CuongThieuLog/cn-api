@@ -29,6 +29,15 @@ class UserService extends BaseService
         $this->query = $this->model->query();
     }
 
+    public function applyFilter()
+    {
+        $search = $this->request->get('search');
+
+        if ($search) {
+            $this->query->where(['name' => $search]);
+        }
+    }
+
     public function store(Request $request)
     {
         $data = $request->only($this->model->getFillable());
