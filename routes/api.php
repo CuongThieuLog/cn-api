@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\SeatController;
 use App\Http\Controllers\Admin\TicketController;
 use App\Http\Controllers\Admin\TicketFoodController;
 use App\Http\Controllers\Admin\TicketSeatController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\User\FacebookController;
 use App\Http\Controllers\User\GoogleController;
 use App\Http\Controllers\User\StripePaymentController;
@@ -59,6 +60,7 @@ Route::prefix('admin')->group(function () {
     });
     
     Route::middleware(['auth:sanctum', 'role:admin,manager,staff'])->group(function () {
+        Route::apiResource('user', UserController::class);
         Route::apiResource('movie', MovieController::class);
         Route::apiResource('movie-type', MovieTypeController::class);
         Route::apiResource('movie-format', MovieFormatController::class);

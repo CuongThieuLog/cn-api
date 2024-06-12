@@ -21,6 +21,7 @@ use App\Repositories\Interfaces\SeatInterface;
 use App\Repositories\Interfaces\TicketFoodInterface;
 use App\Repositories\Interfaces\TicketInterface;
 use App\Repositories\Interfaces\TicketSeatInterface;
+use App\Repositories\Interfaces\UserInterface;
 use App\Repositories\MovieFormatRepository;
 use App\Repositories\MovieRepository;
 use App\Repositories\MovieTypeRepository;
@@ -32,6 +33,7 @@ use App\Repositories\SeatRepository;
 use App\Repositories\TicketFoodRepository;
 use App\Repositories\TicketRepository;
 use App\Repositories\TicketSeatRepository;
+use App\Repositories\UserRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -41,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(UserInterface::class, UserRepository::class);
         $this->app->bind(MovieTypeInterface::class, MovieTypeRepository::class);
         $this->app->bind(MovieFormatInterface::class, MovieFormatRepository::class);
         $this->app->bind(MovieInterface::class, MovieRepository::class);
