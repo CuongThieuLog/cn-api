@@ -40,7 +40,7 @@ class AuthController extends BaseController
             $refreshToken = $user->createToken('refresh_token', [TokenAbility::ISSUE_ACCESS_TOKEN->value], $refreshExpirationTime);
 
             $success = [
-                'token' => $accessToken->plainTextToken,
+                'access_token' => $accessToken->plainTextToken,
                 'refresh_token' => $refreshToken->plainTextToken,
                 'user' => $user,
             ];
