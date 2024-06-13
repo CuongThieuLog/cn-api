@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 
 class CloudinaryService
 {
-    public function storeUploads(Request $request)
+    public function uploadFile(Request $request, $folder)
     {
         try {
             $file = $request->file('file');
@@ -19,7 +19,7 @@ class CloudinaryService
             }
 
             $uploadedFile = Cloudinary::upload($file->getRealPath(), [
-                'folder' => 'cinema'
+                'folder' => $folder,
             ]);
 
             $publicId = $uploadedFile->getPublicId();
@@ -36,7 +36,7 @@ class CloudinaryService
         }
     }
 
-    public function updateUploads(Request $request, $publicId)
+    public function updateUploadFile(Request $request, $publicId, $folder)
     {
         try {
             $file = $request->file('file');
@@ -48,7 +48,7 @@ class CloudinaryService
             Cloudinary::destroy($publicId);
 
             $uploadedFile = Cloudinary::upload($file->getRealPath(), [
-                'folder' => 'cinema'
+                'folder' => $folder,
             ]);
 
             $newPublicId = $uploadedFile->getPublicId();
@@ -65,7 +65,7 @@ class CloudinaryService
         }
     }
 
-    public function destroyUploads($publicId)
+    public function destroyUploadFile($publicId)
     {
         try {
             Cloudinary::destroy($publicId);
