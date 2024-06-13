@@ -12,10 +12,12 @@ use Illuminate\Support\Facades\DB;
 class CinemaService extends BaseService
 {
     protected $cinema;
+    protected $cloudinary;
 
-    public function __construct(CinemaInterface $cinema)
+    public function __construct(CinemaInterface $cinema, CloudinaryService $cloudinary)
     {
         $this->cinema = $cinema;
+        $this->cloudinary = $cloudinary;
         parent::__construct();
     }
 
@@ -35,6 +37,12 @@ class CinemaService extends BaseService
 
         try {
             DB::beginTransaction();
+            $fileResponse = $this->cloudinary->storeUploads($request);
+            $fileResponseData = $fileResponse->getData(true);
+
+            $data['image_url'] = $fileResponseData['url'];
+            $data['image_key'] = $fileResponseData['public_id'];
+
             $cinema = $this->cinema->store($data);
             DB::commit();
 
