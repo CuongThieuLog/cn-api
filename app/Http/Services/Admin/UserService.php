@@ -32,9 +32,14 @@ class UserService extends BaseService
     public function applyFilter()
     {
         $search = $this->request->get('search');
+        $isActive = $this->request->get('is_active');
 
         if ($search) {
             $this->query->where(['name' => $search]);
+        }
+
+        if (isset($isActive)) {
+            $this->query->where(['is_active' => $isActive]);
         }
     }
 
