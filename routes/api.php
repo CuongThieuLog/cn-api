@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\TicketSeatController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\User\FacebookController;
 use App\Http\Controllers\User\GoogleController;
+use App\Http\Controllers\User\PayPalController;
 use App\Http\Controllers\User\StripePaymentController;
 use Illuminate\Support\Facades\Route;
 
@@ -46,6 +47,11 @@ Route::prefix('user')->group(function () {
         Route::get('stripe', [StripePaymentController::class, 'stripe']);
         Route::post('stripe', [StripePaymentController::class, 'stripePost'])->name('stripe.post');
     });
+
+    Route::get('paypal', [PayPalController::class, 'index'])->name('paypal');
+    Route::get('paypal/payment', [PayPalController::class, 'payment'])->name('paypal.payment');
+    Route::get('paypal/payment/success', [PayPalController::class, 'paymentSuccess'])->name('paypal.payment.success');
+    Route::get('paypal/payment/cancel', [PayPalController::class, 'paymentCancel'])->name('paypal.payment/cancel');
 });
 
 Route::prefix('admin')->group(function () {
@@ -58,7 +64,7 @@ Route::prefix('admin')->group(function () {
             Route::get('me', [AdminAuthController::class, 'me']);
         });
     });
-    
+
     Route::middleware(['auth:sanctum', 'role:admin,manager,staff'])->group(function () {
         Route::apiResource('user', UserController::class);
         Route::apiResource('movie', MovieController::class);
