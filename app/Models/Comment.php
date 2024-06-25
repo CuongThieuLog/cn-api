@@ -15,6 +15,7 @@ class Comment extends Model
         'content',
         'user_id',
         'movie_id',
+        'parent_id',
         'star',
         'feeling',
         'image',
@@ -28,5 +29,10 @@ class Comment extends Model
     public function movie()
     {
         return $this->belongsTo(Movie::class);
+    }
+
+    public function replies()
+    {
+        return $this->hasMany(Comment::class, 'parent_id');
     }
 }

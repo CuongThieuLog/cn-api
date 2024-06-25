@@ -7,6 +7,7 @@ use App\Http\Services\BaseService;
 use App\Models\Comment;
 use App\Repositories\Interfaces\CommentInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CommentService extends BaseService
@@ -31,10 +32,12 @@ class CommentService extends BaseService
 
     public function store(Request $request)
     {
+        $user = Auth::user();
         $data = $request->only($this->model->getFillable());
 
         try {
             DB::beginTransaction();
+            $data['user_id'] = $user->id;
             $comment = $this->comment->store($data);
             DB::commit();
 

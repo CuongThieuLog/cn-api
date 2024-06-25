@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Admin\MovieController;
+use App\Http\Controllers\Admin\MovieController as MovieControllerAdmin;
 use App\Http\Controllers\Admin\MovieFormatController;
 use App\Http\Controllers\Admin\MovieTypeController;
 use App\Http\Controllers\User\AuthController;
@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\TicketSeatController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\User\FacebookController;
 use App\Http\Controllers\User\GoogleController;
+use App\Http\Controllers\User\MovieController;
 use App\Http\Controllers\User\PayPalController;
 use App\Http\Controllers\User\StripePaymentController;
 use Illuminate\Support\Facades\Route;
@@ -41,6 +42,10 @@ Route::prefix('user')->group(function () {
             Route::get('email/verify/{id}/{hash}', [AuthController::class, 'verify'])->name('verification.verify');
             Route::post('email/resend', [AuthController::class, 'resendVerificationEmail'])->name('verification.resend');
         });
+    });
+
+    Route::middleware(['auth:sanctum', 'role:user'])->group(function () {
+        Route::apiResource('movie', MovieController::class)->only(['index', 'show']);
     });
 
     Route::middleware('auth:sanctum')->prefix('payments')->group(function () {
@@ -67,7 +72,7 @@ Route::prefix('admin')->group(function () {
 
     Route::middleware(['auth:sanctum', 'role:admin,manager,staff'])->group(function () {
         Route::apiResource('user', UserController::class);
-        Route::apiResource('movie', MovieController::class);
+        Route::apiResource('movie', MovieControllerAdmin::class);
         Route::apiResource('movie-type', MovieTypeController::class);
         Route::apiResource('movie-format', MovieFormatController::class);
         Route::apiResource('person', PersonController::class);
