@@ -31,17 +31,37 @@ class UserService extends BaseService
 
     public function applyFilter()
     {
-        $search = $this->request->get('search');
+        $search = trim($this->request->get('search'));
         $isActive = $this->request->get('is_active');
+        $role = $this->request->get('role');
 
         if ($search) {
-            $this->query->where(['name' => $search]);
+            $this->query->where('name', 'like', '%' . $search . '%');
         }
 
         if (isset($isActive)) {
             $this->query->where(['is_active' => $isActive]);
         }
+
+        if (isset($role)) {
+            $this->query->where(['role' => $role]);
+        }
+
+        $this->applySorting();
     }
+
+    public function applySorting()
+    {
+        $column = $this->request->get('column');
+        $sortBy = $this->request->get('sort_by') ?? 'DESC';
+
+        $allowedColumns = ['id', 'name', 'email', 'role', 'is_active', 'created_at'];
+
+        if ($column && in_array($column, $allowedColumns)) {
+            $this->query->orderBy($column, $sortBy);
+        }
+    }
+
 
     public function store(Request $request)
     {
