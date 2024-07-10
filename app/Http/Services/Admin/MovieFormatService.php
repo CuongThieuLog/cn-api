@@ -31,10 +31,24 @@ class MovieFormatService extends BaseService
 
     public function applyFilter()
     {
-        $name = $this->request->get('name');
+        $search = trim($this->request->get('search'));
 
-        if ($name) {
-            $this->query->where(['name' => $name]);
+        if ($search) {
+            $this->query->where('name', 'like', '%' . $search . '%');
+        }
+
+        $this->applySorting();
+    }
+
+    public function applySorting()
+    {
+        $column = $this->request->get('column');
+        $sortBy = $this->request->get('sort_by') ?? 'DESC';
+
+        $allowedColumns = ['id', 'name'];
+
+        if ($column && in_array($column, $allowedColumns)) {
+            $this->query->orderBy($column, $sortBy);
         }
     }
 
