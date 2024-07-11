@@ -1,27 +1,27 @@
 <?php
 
-namespace App\Http\Services\Admin;
+namespace App\Http\Services;
 
 use App\Enums\StatusCode;
 use App\Http\Services\BaseService;
-use App\Models\Movie;
-use App\Repositories\Interfaces\MovieInterface;
+use App\Models\Person;
+use App\Repositories\Interfaces\PersonInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class MovieService extends BaseService
+class PersonService extends BaseService
 {
-    protected $movie;
+    protected $person;
 
-    public function __construct(MovieInterface $movie)
+    public function __construct(PersonInterface $person)
     {
-        $this->movie = $movie;
+        $this->person = $person;
         parent::__construct();
     }
 
     public function setModel()
     {
-        $this->model = new Movie();
+        $this->model = new Person();
     }
 
     protected function setQuery()
@@ -44,20 +44,20 @@ class MovieService extends BaseService
 
         try {
             DB::beginTransaction();
-            $movie = $this->movie->store($data);
+            $person = $this->person->store($data);
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'data' => $movie,
-                'message' => 'Movie created successfully'
+                'data' => $person,
+                'message' => 'Person created successfully'
             ], StatusCode::HTTP_CREATED);
         } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create movie',
+                'message' => 'Failed to create person',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -69,20 +69,20 @@ class MovieService extends BaseService
 
         try {
             DB::beginTransaction();
-            $movie = $this->movie->update($data, $id);
+            $person = $this->person->update($data, $id);
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'data' => $movie,
-                'message' => 'Movie updated successfully'
+                'data' => $person,
+                'message' => 'Person updated successfully'
             ], StatusCode::HTTP_OK);
         } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update movie',
+                'message' => 'Failed to update person',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -91,17 +91,17 @@ class MovieService extends BaseService
     public function show($id)
     {
         try {
-            $movie = $this->movie->show($id);
+            $person = $this->person->show($id);
 
             return response()->json([
                 'success' => true,
-                'data' => $movie,
-                'message' => 'Movie retrieved successfully'
+                'data' => $person,
+                'message' => 'Person retrieved successfully'
             ], StatusCode::HTTP_OK);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Movie not found',
+                'message' => 'Person not found',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_NOT_FOUND);
         }

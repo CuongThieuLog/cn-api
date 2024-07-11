@@ -1,27 +1,27 @@
 <?php
 
-namespace App\Http\Services\Admin;
+namespace App\Http\Services;
 
 use App\Enums\StatusCode;
 use App\Http\Services\BaseService;
-use App\Models\Person;
-use App\Repositories\Interfaces\PersonInterface;
+use App\Models\MovieFormat;
+use App\Repositories\Interfaces\MovieFormatInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class PersonService extends BaseService
+class MovieFormatService extends BaseService
 {
-    protected $person;
+    protected $movieFormat;
 
-    public function __construct(PersonInterface $person)
+    public function __construct(MovieFormatInterface $movieFormat)
     {
-        $this->person = $person;
+        $this->movieFormat = $movieFormat;
         parent::__construct();
     }
 
     public function setModel()
     {
-        $this->model = new Person();
+        $this->model = new MovieFormat();
     }
 
     protected function setQuery()
@@ -31,10 +31,24 @@ class PersonService extends BaseService
 
     public function applyFilter()
     {
-        $name = $this->request->get('name');
+        $search = trim($this->request->get('search'));
 
-        if ($name) {
-            $this->query->where(['name' => $name]);
+        if ($search) {
+            $this->query->where('name', 'like', '%' . $search . '%');
+        }
+
+        $this->applySorting();
+    }
+
+    public function applySorting()
+    {
+        $column = $this->request->get('column');
+        $sortBy = $this->request->get('sort_by') ?? 'DESC';
+
+        $allowedColumns = ['id', 'name'];
+
+        if ($column && in_array($column, $allowedColumns)) {
+            $this->query->orderBy($column, $sortBy);
         }
     }
 
@@ -44,20 +58,20 @@ class PersonService extends BaseService
 
         try {
             DB::beginTransaction();
-            $person = $this->person->store($data);
+            $movieFormat = $this->movieFormat->store($data);
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'data' => $person,
-                'message' => 'Person created successfully'
+                'data' => $movieFormat,
+                'message' => 'Movie format created successfully'
             ], StatusCode::HTTP_CREATED);
         } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create person',
+                'message' => 'Failed to create movie format',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -69,20 +83,20 @@ class PersonService extends BaseService
 
         try {
             DB::beginTransaction();
-            $person = $this->person->update($data, $id);
+            $movieFormat = $this->movieFormat->update($data, $id);
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'data' => $person,
-                'message' => 'Person updated successfully'
+                'data' => $movieFormat,
+                'message' => 'Movie format updated successfully'
             ], StatusCode::HTTP_OK);
         } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update person',
+                'message' => 'Failed to update movie format',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -91,17 +105,17 @@ class PersonService extends BaseService
     public function show($id)
     {
         try {
-            $person = $this->person->show($id);
+            $movieFormat = $this->movieFormat->show($id);
 
             return response()->json([
                 'success' => true,
-                'data' => $person,
-                'message' => 'Person retrieved successfully'
+                'data' => $movieFormat,
+                'message' => 'Movie format retrieved successfully'
             ], StatusCode::HTTP_OK);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Person not found',
+                'message' => 'Movie format not found',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_NOT_FOUND);
         }

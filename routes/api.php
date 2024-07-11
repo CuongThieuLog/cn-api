@@ -1,22 +1,32 @@
 <?php
 
-use App\Http\Controllers\Admin\MovieController;
-use App\Http\Controllers\Admin\MovieFormatController;
-use App\Http\Controllers\Admin\MovieTypeController;
-use App\Http\Controllers\User\AuthController;
+// Admin
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\MovieController as AdminMovieController;
+use App\Http\Controllers\Admin\MovieFormatController as AdminMovieFormatController;
+use App\Http\Controllers\Admin\MovieTypeController as AdminMovieTypeController;
+use App\Http\Controllers\Admin\PersonController as AdminPersonController;
+use App\Http\Controllers\Admin\PersonMovieController as AdminPersonMovieController;
+
+// User
+use App\Http\Controllers\User\AuthController;
+use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\User\MovieController;
+use App\Http\Controllers\User\MovieFormatController;
+use App\Http\Controllers\User\MovieTypeController;
+use App\Http\Controllers\User\PersonController;
+use App\Http\Controllers\User\PersonMovieController;
+
 use App\Http\Controllers\Admin\CinemaController;
 use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\FoodController;
-use App\Http\Controllers\Admin\PersonController;
-use App\Http\Controllers\Admin\PersonMovieController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\ScreenController;
 use App\Http\Controllers\Admin\SeatController;
 use App\Http\Controllers\Admin\TicketController;
 use App\Http\Controllers\Admin\TicketFoodController;
 use App\Http\Controllers\Admin\TicketSeatController;
-use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\User\FacebookController;
 use App\Http\Controllers\User\GoogleController;
 use App\Http\Controllers\User\PayPalController;
@@ -52,6 +62,15 @@ Route::prefix('user')->group(function () {
     Route::get('paypal/payment', [PayPalController::class, 'payment'])->name('paypal.payment');
     Route::get('paypal/payment/success', [PayPalController::class, 'paymentSuccess'])->name('paypal.payment.success');
     Route::get('paypal/payment/cancel', [PayPalController::class, 'paymentCancel'])->name('paypal.payment/cancel');
+
+    Route::middleware(['auth:sanctum', 'role:user'])->as('user.')->group(function () {
+        Route::apiResource('user', UserController::class)->only([]);
+        Route::apiResource('movie', MovieController::class)->only(['index', 'show']);
+        Route::apiResource('movie-format', MovieFormatController::class)->only(['index', 'show']);
+        Route::apiResource('movie-type', MovieTypeController::class)->only(['index', 'show']);
+        Route::apiResource('person', PersonController::class)->only(['index', 'show']);
+        Route::apiResource('person-movie', PersonMovieController::class);
+    });
 });
 
 Route::prefix('admin')->group(function () {
@@ -65,13 +84,14 @@ Route::prefix('admin')->group(function () {
         });
     });
 
-    Route::middleware(['auth:sanctum', 'role:admin,manager,staff'])->group(function () {
-        Route::apiResource('user', UserController::class);
-        Route::apiResource('movie', MovieController::class);
-        Route::apiResource('movie-type', MovieTypeController::class);
-        Route::apiResource('movie-format', MovieFormatController::class);
-        Route::apiResource('person', PersonController::class);
-        Route::apiResource('person-movie', PersonMovieController::class);
+    Route::middleware(['auth:sanctum', 'role:admin,manager,staff'])->as('admin.')->group(function () {
+        Route::apiResource('user', AdminUserController::class);
+        Route::apiResource('movie', AdminMovieController::class);
+        Route::apiResource('movie-type', AdminMovieTypeController::class);
+        Route::apiResource('movie-format', AdminMovieFormatController::class);
+        Route::apiResource('person', AdminPersonController::class);
+        Route::apiResource('person-movie', AdminPersonMovieController::class);
+        
         Route::apiResource('cinema', CinemaController::class);
         Route::apiResource('screen', ScreenController::class);
         Route::apiResource('food', FoodController::class);
