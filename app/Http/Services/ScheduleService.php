@@ -1,32 +1,41 @@
 <?php
 
-namespace App\Http\Services\Admin;
+namespace App\Http\Services;
 
 use App\Enums\StatusCode;
 use App\Http\Services\BaseService;
-use App\Models\TicketFood;
-use App\Repositories\Interfaces\TicketFoodInterface;
+use App\Models\Schedule;
+use App\Repositories\Interfaces\ScheduleInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class TicketFoodService extends BaseService
+class ScheduleService extends BaseService
 {
-    protected $ticketFood;
+    protected $schedule;
 
-    public function __construct(TicketFoodInterface $ticketFood)
+    public function __construct(ScheduleInterface $schedule)
     {
-        $this->ticketFood = $ticketFood;
+        $this->schedule = $schedule;
         parent::__construct();
     }
 
     public function setModel()
     {
-        $this->model = new TicketFood();
+        $this->model = new Schedule();
     }
 
     protected function setQuery()
     {
         $this->query = $this->model->query();
+    }
+
+    public function applyFilter()
+    {
+        $name = $this->request->get('name');
+
+        if ($name) {
+            $this->query->where(['name' => $name]);
+        }
     }
 
     public function store(Request $request)
@@ -35,20 +44,20 @@ class TicketFoodService extends BaseService
 
         try {
             DB::beginTransaction();
-            $ticketFood = $this->ticketFood->store($data);
+            $schedule = $this->schedule->store($data);
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'data' => $ticketFood,
-                'message' => 'Ticket food created successfully'
+                'data' => $schedule,
+                'message' => 'Schedule created successfully'
             ], StatusCode::HTTP_CREATED);
         } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create ticket food',
+                'message' => 'Failed to create schedule',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -60,20 +69,20 @@ class TicketFoodService extends BaseService
 
         try {
             DB::beginTransaction();
-            $ticketFood = $this->ticketFood->update($data, $id);
+            $schedule = $this->schedule->update($data, $id);
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'data' => $ticketFood,
-                'message' => 'Ticket food updated successfully'
+                'data' => $schedule,
+                'message' => 'Schedule updated successfully'
             ], StatusCode::HTTP_OK);
         } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update ticket food',
+                'message' => 'Failed to update schedule',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -82,17 +91,17 @@ class TicketFoodService extends BaseService
     public function show($id)
     {
         try {
-            $ticketFood = $this->ticketFood->show($id);
+            $schedule = $this->schedule->show($id);
 
             return response()->json([
                 'success' => true,
-                'data' => $ticketFood,
-                'message' => 'Ticket food retrieved successfully'
+                'data' => $schedule,
+                'message' => 'Schedule retrieved successfully'
             ], StatusCode::HTTP_OK);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Ticket food not found',
+                'message' => 'Schedule not found',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_NOT_FOUND);
         }

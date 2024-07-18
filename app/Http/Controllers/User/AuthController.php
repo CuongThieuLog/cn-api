@@ -7,7 +7,7 @@ use App\Enums\TokenAbility;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Http\Services\User\AuthService;
+use App\Http\Services\AuthService;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Verified;
@@ -51,33 +51,40 @@ class AuthController extends BaseController
 
     public function login(LoginRequest $request): JsonResponse
     {
-        $credentials = $request->only('email', 'password');
-        $user = $this->authService->attemptLogin($credentials);
+        try {
+            $credentials = $request->only('email', 'password');
+            $user = $this->authService->attemptLogin($credentials);
 
-        if (!$user) {
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => ['error' => 'Your password is incorrect.']
+                ], StatusCode::HTTP_UNAUTHORIZED);
+            }
+
+            $expirationTime = Carbon::now()->addMinutes(config('sanctum.ac_expiration'));
+            $refreshExpirationTime = Carbon::now()->addMinutes(config('sanctum.rt_expiration'));
+
+            $accessToken = $user->createToken('access_token', [TokenAbility::ACCESS_API->value], $expirationTime);
+            $refreshToken = $user->createToken('refresh_token', [TokenAbility::ISSUE_ACCESS_TOKEN->value], $refreshExpirationTime);
+
+            $success = [
+                'access_token' => $accessToken->plainTextToken,
+                'refresh_token' => $refreshToken->plainTextToken,
+                'user' => $user,
+            ];
+
+            return response()->json([
+                'success' => true,
+                'data' => $success,
+                'message' => 'Login account successfully.'
+            ], StatusCode::HTTP_OK);
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'errors' => ['error' => 'Your password is incorrect.']
-            ], StatusCode::HTTP_UNAUTHORIZED);
+                'error' => $e->getMessage()
+            ], StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        $expirationTime = Carbon::now()->addMinutes(config('sanctum.ac_expiration'));
-        $refreshExpirationTime = Carbon::now()->addMinutes(config('sanctum.rt_expiration'));
-
-        $accessToken = $user->createToken('access_token', [TokenAbility::ACCESS_API->value], $expirationTime);
-        $refreshToken = $user->createToken('refresh_token', [TokenAbility::ISSUE_ACCESS_TOKEN->value], $refreshExpirationTime);
-
-        $success = [
-            'token' => $accessToken->plainTextToken,
-            'refresh_token' => $refreshToken->plainTextToken,
-            'user' => $user,
-        ];
-
-        return response()->json([
-            'success' => true,
-            'data' => $success,
-            'message' => 'Login account successfully.'
-        ], StatusCode::HTTP_OK);
     }
 
     public function logout(Request $request): JsonResponse

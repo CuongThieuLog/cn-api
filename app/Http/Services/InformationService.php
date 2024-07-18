@@ -1,27 +1,27 @@
 <?php
 
-namespace App\Http\Services\Admin;
+namespace App\Http\Services;
 
 use App\Enums\StatusCode;
 use App\Http\Services\BaseService;
-use App\Models\Comment;
-use App\Repositories\Interfaces\CommentInterface;
+use App\Models\Information;
+use App\Repositories\Interfaces\InformationInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class CommentService extends BaseService
+class InformationService extends BaseService
 {
-    protected $comment;
+    protected $information;
 
-    public function __construct(CommentInterface $comment)
+    public function __construct(InformationInterface $information)
     {
-        $this->comment = $comment;
+        $this->information = $information;
         parent::__construct();
     }
 
     public function setModel()
     {
-        $this->model = new Comment();
+        $this->model = new Information();
     }
 
     protected function setQuery()
@@ -35,20 +35,20 @@ class CommentService extends BaseService
 
         try {
             DB::beginTransaction();
-            $comment = $this->comment->store($data);
+            $information = $this->information->store($data);
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'data' => $comment,
-                'message' => 'Comment created successfully'
+                'data' => $information,
+                'message' => 'Information created successfully'
             ], StatusCode::HTTP_CREATED);
         } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create comment',
+                'message' => 'Failed to create information',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -60,20 +60,20 @@ class CommentService extends BaseService
 
         try {
             DB::beginTransaction();
-            $comment = $this->comment->update($data, $id);
+            $information = $this->information->update($data, $id);
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'data' => $comment,
-                'message' => 'Comment updated successfully'
+                'data' => $information,
+                'message' => 'Information updated successfully'
             ], StatusCode::HTTP_OK);
         } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update comment',
+                'message' => 'Failed to update information',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -82,17 +82,17 @@ class CommentService extends BaseService
     public function show($id)
     {
         try {
-            $comment = $this->comment->show($id);
+            $information = $this->information->show($id);
 
             return response()->json([
                 'success' => true,
-                'data' => $comment,
-                'message' => 'Comment retrieved successfully'
+                'data' => $information,
+                'message' => 'Information retrieved successfully'
             ], StatusCode::HTTP_OK);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Comment not found',
+                'message' => 'Information not found',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_NOT_FOUND);
         }

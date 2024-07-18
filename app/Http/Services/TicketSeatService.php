@@ -1,27 +1,27 @@
 <?php
 
-namespace App\Http\Services\Admin;
+namespace App\Http\Services;
 
 use App\Enums\StatusCode;
 use App\Http\Services\BaseService;
-use App\Models\Ticket;
-use App\Repositories\Interfaces\TicketInterface;
+use App\Models\TicketSeat;
+use App\Repositories\Interfaces\TicketSeatInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class TicketService extends BaseService
+class TicketSeatService extends BaseService
 {
-    protected $ticket;
+    protected $ticketSeat;
 
-    public function __construct(TicketInterface $ticket)
+    public function __construct(TicketSeatInterface $ticketSeat)
     {
-        $this->ticket = $ticket;
+        $this->ticketSeat = $ticketSeat;
         parent::__construct();
     }
 
     public function setModel()
     {
-        $this->model = new Ticket();
+        $this->model = new TicketSeat();
     }
 
     protected function setQuery()
@@ -35,20 +35,20 @@ class TicketService extends BaseService
 
         try {
             DB::beginTransaction();
-            $ticket = $this->ticket->store($data);
+            $ticketSeat = $this->ticketSeat->store($data);
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'data' => $ticket,
-                'message' => 'Ticket created successfully'
+                'data' => $ticketSeat,
+                'message' => 'Ticket seat created successfully'
             ], StatusCode::HTTP_CREATED);
         } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create ticket',
+                'message' => 'Failed to create ticket seat',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -60,20 +60,20 @@ class TicketService extends BaseService
 
         try {
             DB::beginTransaction();
-            $ticket = $this->ticket->update($data, $id);
+            $ticketSeat = $this->ticketSeat->update($data, $id);
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'data' => $ticket,
-                'message' => 'Ticket updated successfully'
+                'data' => $ticketSeat,
+                'message' => 'Ticket seat updated successfully'
             ], StatusCode::HTTP_OK);
         } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update ticket',
+                'message' => 'Failed to update ticket seat',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -82,17 +82,17 @@ class TicketService extends BaseService
     public function show($id)
     {
         try {
-            $ticket = $this->ticket->show($id);
+            $ticketSeat = $this->ticketSeat->show($id);
 
             return response()->json([
                 'success' => true,
-                'data' => $ticket,
-                'message' => 'Ticket retrieved successfully'
+                'data' => $ticketSeat,
+                'message' => 'Ticket seat retrieved successfully'
             ], StatusCode::HTTP_OK);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Ticket not found',
+                'message' => 'Ticket seat not found',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_NOT_FOUND);
         }

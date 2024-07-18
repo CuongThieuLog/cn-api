@@ -6,7 +6,7 @@ use App\Enums\StatusCode;
 use App\Enums\TokenAbility;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\LoginRequest;
-use App\Http\Services\Admin\AuthService;
+use App\Http\Services\AuthService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -24,7 +24,7 @@ class AuthController extends BaseController
     {
         try {
             $credentials = $request->only('email', 'password');
-            $user = $this->authService->attemptLogin($credentials);
+            $user = $this->authService->attemptLoginAdmin($credentials);
 
             if (!$user) {
                 return response()->json([

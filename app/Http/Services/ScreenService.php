@@ -1,27 +1,27 @@
 <?php
 
-namespace App\Http\Services\Admin;
+namespace App\Http\Services;
 
 use App\Enums\StatusCode;
 use App\Http\Services\BaseService;
-use App\Models\Information;
-use App\Repositories\Interfaces\InformationInterface;
+use App\Models\Screen;
+use App\Repositories\Interfaces\ScreenInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class InformationService extends BaseService
+class ScreenService extends BaseService
 {
-    protected $information;
+    protected $screen;
 
-    public function __construct(InformationInterface $information)
+    public function __construct(ScreenInterface $screen)
     {
-        $this->information = $information;
+        $this->screen = $screen;
         parent::__construct();
     }
 
     public function setModel()
     {
-        $this->model = new Information();
+        $this->model = new Screen();
     }
 
     protected function setQuery()
@@ -35,20 +35,20 @@ class InformationService extends BaseService
 
         try {
             DB::beginTransaction();
-            $information = $this->information->store($data);
+            $screen = $this->screen->store($data);
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'data' => $information,
-                'message' => 'Information created successfully'
+                'data' => $screen,
+                'message' => 'Screen created successfully'
             ], StatusCode::HTTP_CREATED);
         } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create information',
+                'message' => 'Failed to create screen',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -60,20 +60,20 @@ class InformationService extends BaseService
 
         try {
             DB::beginTransaction();
-            $information = $this->information->update($data, $id);
+            $screen = $this->screen->update($data, $id);
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'data' => $information,
-                'message' => 'Information updated successfully'
+                'data' => $screen,
+                'message' => 'Screen updated successfully'
             ], StatusCode::HTTP_OK);
         } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update information',
+                'message' => 'Failed to update screen',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -82,17 +82,17 @@ class InformationService extends BaseService
     public function show($id)
     {
         try {
-            $information = $this->information->show($id);
+            $screen = $this->screen->show($id);
 
             return response()->json([
                 'success' => true,
-                'data' => $information,
-                'message' => 'Information retrieved successfully'
+                'data' => $screen,
+                'message' => 'Screen retrieved successfully'
             ], StatusCode::HTTP_OK);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Information not found',
+                'message' => 'Screen not found',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_NOT_FOUND);
         }

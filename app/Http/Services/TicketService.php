@@ -1,27 +1,27 @@
 <?php
 
-namespace App\Http\Services\Admin;
+namespace App\Http\Services;
 
 use App\Enums\StatusCode;
 use App\Http\Services\BaseService;
-use App\Models\Food;
-use App\Repositories\Interfaces\FoodInterface;
+use App\Models\Ticket;
+use App\Repositories\Interfaces\TicketInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class FoodService extends BaseService
+class TicketService extends BaseService
 {
-    protected $food;
+    protected $ticket;
 
-    public function __construct(FoodInterface $food)
+    public function __construct(TicketInterface $ticket)
     {
-        $this->food = $food;
+        $this->ticket = $ticket;
         parent::__construct();
     }
 
     public function setModel()
     {
-        $this->model = new Food();
+        $this->model = new Ticket();
     }
 
     protected function setQuery()
@@ -35,20 +35,20 @@ class FoodService extends BaseService
 
         try {
             DB::beginTransaction();
-            $food = $this->food->store($data);
+            $ticket = $this->ticket->store($data);
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'data' => $food,
-                'message' => 'Food created successfully'
+                'data' => $ticket,
+                'message' => 'Ticket created successfully'
             ], StatusCode::HTTP_CREATED);
         } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create food',
+                'message' => 'Failed to create ticket',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -60,20 +60,20 @@ class FoodService extends BaseService
 
         try {
             DB::beginTransaction();
-            $food = $this->food->update($data, $id);
+            $ticket = $this->ticket->update($data, $id);
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'data' => $food,
-                'message' => 'Food updated successfully'
+                'data' => $ticket,
+                'message' => 'Ticket updated successfully'
             ], StatusCode::HTTP_OK);
         } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update food',
+                'message' => 'Failed to update ticket',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -82,17 +82,17 @@ class FoodService extends BaseService
     public function show($id)
     {
         try {
-            $food = $this->food->show($id);
+            $ticket = $this->ticket->show($id);
 
             return response()->json([
                 'success' => true,
-                'data' => $food,
-                'message' => 'Food retrieved successfully'
+                'data' => $ticket,
+                'message' => 'Ticket retrieved successfully'
             ], StatusCode::HTTP_OK);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Food not found',
+                'message' => 'Ticket not found',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_NOT_FOUND);
         }

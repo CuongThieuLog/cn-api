@@ -1,27 +1,27 @@
 <?php
 
-namespace App\Http\Services\Admin;
+namespace App\Http\Services;
 
 use App\Enums\StatusCode;
 use App\Http\Services\BaseService;
-use App\Models\Seat;
-use App\Repositories\Interfaces\SeatInterface;
+use App\Models\TicketFood;
+use App\Repositories\Interfaces\TicketFoodInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class SeatService extends BaseService
+class TicketFoodService extends BaseService
 {
-    protected $seat;
+    protected $ticketFood;
 
-    public function __construct(SeatInterface $seat)
+    public function __construct(TicketFoodInterface $ticketFood)
     {
-        $this->seat = $seat;
+        $this->ticketFood = $ticketFood;
         parent::__construct();
     }
 
     public function setModel()
     {
-        $this->model = new Seat();
+        $this->model = new TicketFood();
     }
 
     protected function setQuery()
@@ -35,20 +35,20 @@ class SeatService extends BaseService
 
         try {
             DB::beginTransaction();
-            $seat = $this->seat->store($data);
+            $ticketFood = $this->ticketFood->store($data);
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'data' => $seat,
-                'message' => 'Seat created successfully'
+                'data' => $ticketFood,
+                'message' => 'Ticket food created successfully'
             ], StatusCode::HTTP_CREATED);
         } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create seat',
+                'message' => 'Failed to create ticket food',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -60,20 +60,20 @@ class SeatService extends BaseService
 
         try {
             DB::beginTransaction();
-            $seat = $this->seat->update($data, $id);
+            $ticketFood = $this->ticketFood->update($data, $id);
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'data' => $seat,
-                'message' => 'Seat updated successfully'
+                'data' => $ticketFood,
+                'message' => 'Ticket food updated successfully'
             ], StatusCode::HTTP_OK);
         } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update seat',
+                'message' => 'Failed to update ticket food',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -82,17 +82,17 @@ class SeatService extends BaseService
     public function show($id)
     {
         try {
-            $seat = $this->seat->show($id);
+            $ticketFood = $this->ticketFood->show($id);
 
             return response()->json([
                 'success' => true,
-                'data' => $seat,
-                'message' => 'Seat retrieved successfully'
+                'data' => $ticketFood,
+                'message' => 'Ticket food retrieved successfully'
             ], StatusCode::HTTP_OK);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Seat not found',
+                'message' => 'Ticket food not found',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_NOT_FOUND);
         }

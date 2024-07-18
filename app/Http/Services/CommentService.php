@@ -1,27 +1,27 @@
 <?php
 
-namespace App\Http\Services\Admin;
+namespace App\Http\Services;
 
 use App\Enums\StatusCode;
 use App\Http\Services\BaseService;
-use App\Models\Screen;
-use App\Repositories\Interfaces\ScreenInterface;
+use App\Models\Comment;
+use App\Repositories\Interfaces\CommentInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class ScreenService extends BaseService
+class CommentService extends BaseService
 {
-    protected $screen;
+    protected $comment;
 
-    public function __construct(ScreenInterface $screen)
+    public function __construct(CommentInterface $comment)
     {
-        $this->screen = $screen;
+        $this->comment = $comment;
         parent::__construct();
     }
 
     public function setModel()
     {
-        $this->model = new Screen();
+        $this->model = new Comment();
     }
 
     protected function setQuery()
@@ -35,20 +35,20 @@ class ScreenService extends BaseService
 
         try {
             DB::beginTransaction();
-            $screen = $this->screen->store($data);
+            $comment = $this->comment->store($data);
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'data' => $screen,
-                'message' => 'Screen created successfully'
+                'data' => $comment,
+                'message' => 'Comment created successfully'
             ], StatusCode::HTTP_CREATED);
         } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create screen',
+                'message' => 'Failed to create comment',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -60,20 +60,20 @@ class ScreenService extends BaseService
 
         try {
             DB::beginTransaction();
-            $screen = $this->screen->update($data, $id);
+            $comment = $this->comment->update($data, $id);
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'data' => $screen,
-                'message' => 'Screen updated successfully'
+                'data' => $comment,
+                'message' => 'Comment updated successfully'
             ], StatusCode::HTTP_OK);
         } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update screen',
+                'message' => 'Failed to update comment',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -82,17 +82,17 @@ class ScreenService extends BaseService
     public function show($id)
     {
         try {
-            $screen = $this->screen->show($id);
+            $comment = $this->comment->show($id);
 
             return response()->json([
                 'success' => true,
-                'data' => $screen,
-                'message' => 'Screen retrieved successfully'
+                'data' => $comment,
+                'message' => 'Comment retrieved successfully'
             ], StatusCode::HTTP_OK);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Screen not found',
+                'message' => 'Comment not found',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_NOT_FOUND);
         }

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BaseController;
-use App\Http\Services\Admin\UserService;
+use App\Http\Services\UserService;
 use Illuminate\Http\Request;
 
 class UserController extends BaseController

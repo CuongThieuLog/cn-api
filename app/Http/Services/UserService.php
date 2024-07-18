@@ -1,27 +1,27 @@
 <?php
 
-namespace App\Http\Services\Admin;
+namespace App\Http\Services;
 
 use App\Enums\StatusCode;
 use App\Http\Services\BaseService;
-use App\Models\TicketSeat;
-use App\Repositories\Interfaces\TicketSeatInterface;
+use App\Models\User;
+use App\Repositories\Interfaces\UserInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class TicketSeatService extends BaseService
+class UserService extends BaseService
 {
-    protected $ticketSeat;
+    protected $user;
 
-    public function __construct(TicketSeatInterface $ticketSeat)
+    public function __construct(UserInterface $user)
     {
-        $this->ticketSeat = $ticketSeat;
+        $this->user = $user;
         parent::__construct();
     }
 
     public function setModel()
     {
-        $this->model = new TicketSeat();
+        $this->model = new User();
     }
 
     protected function setQuery()
@@ -29,26 +29,60 @@ class TicketSeatService extends BaseService
         $this->query = $this->model->query();
     }
 
+    public function applyFilter()
+    {
+        $search = trim($this->request->get('search'));
+        $isActive = $this->request->get('is_active');
+        $role = $this->request->get('role');
+
+        if ($search) {
+            $this->query->where('name', 'like', '%' . $search . '%');
+        }
+
+        if (isset($isActive)) {
+            $this->query->where(['is_active' => $isActive]);
+        }
+
+        if (isset($role)) {
+            $this->query->where(['role' => $role]);
+        }
+
+        $this->applySorting();
+    }
+
+    public function applySorting()
+    {
+        $column = $this->request->get('column');
+        $sortBy = $this->request->get('sort_by') ?? 'DESC';
+
+        $allowedColumns = ['id', 'name', 'email', 'role', 'is_active', 'created_at'];
+
+        if ($column && in_array($column, $allowedColumns)) {
+            $this->query->orderBy($column, $sortBy);
+        }
+    }
+
+
     public function store(Request $request)
     {
         $data = $request->only($this->model->getFillable());
 
         try {
             DB::beginTransaction();
-            $ticketSeat = $this->ticketSeat->store($data);
+            $user = $this->user->store($data);
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'data' => $ticketSeat,
-                'message' => 'Ticket seat created successfully'
+                'data' => $user,
+                'message' => 'User created successfully'
             ], StatusCode::HTTP_CREATED);
         } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create ticket seat',
+                'message' => 'Failed to create user',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -60,20 +94,20 @@ class TicketSeatService extends BaseService
 
         try {
             DB::beginTransaction();
-            $ticketSeat = $this->ticketSeat->update($data, $id);
+            $user = $this->user->update($data, $id);
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'data' => $ticketSeat,
-                'message' => 'Ticket seat updated successfully'
+                'data' => $user,
+                'message' => 'User updated successfully'
             ], StatusCode::HTTP_OK);
         } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update ticket seat',
+                'message' => 'Failed to update user',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -82,17 +116,17 @@ class TicketSeatService extends BaseService
     public function show($id)
     {
         try {
-            $ticketSeat = $this->ticketSeat->show($id);
+            $user = $this->user->show($id);
 
             return response()->json([
                 'success' => true,
-                'data' => $ticketSeat,
-                'message' => 'Ticket seat retrieved successfully'
+                'data' => $user,
+                'message' => 'User retrieved successfully'
             ], StatusCode::HTTP_OK);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Ticket seat not found',
+                'message' => 'User not found',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_NOT_FOUND);
         }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Services\Admin;
+namespace App\Http\Services;
 
 use App\Enums\StatusCode;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;

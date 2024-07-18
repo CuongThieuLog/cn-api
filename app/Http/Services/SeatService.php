@@ -1,29 +1,27 @@
 <?php
 
-namespace App\Http\Services\Admin;
+namespace App\Http\Services;
 
 use App\Enums\StatusCode;
 use App\Http\Services\BaseService;
-use App\Models\Cinema;
-use App\Repositories\Interfaces\CinemaInterface;
+use App\Models\Seat;
+use App\Repositories\Interfaces\SeatInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class CinemaService extends BaseService
+class SeatService extends BaseService
 {
-    protected $cinema;
-    protected $cloudinary;
+    protected $seat;
 
-    public function __construct(CinemaInterface $cinema, CloudinaryService $cloudinary)
+    public function __construct(SeatInterface $seat)
     {
-        $this->cinema = $cinema;
-        $this->cloudinary = $cloudinary;
+        $this->seat = $seat;
         parent::__construct();
     }
 
     public function setModel()
     {
-        $this->model = new Cinema();
+        $this->model = new Seat();
     }
 
     protected function setQuery()
@@ -37,26 +35,20 @@ class CinemaService extends BaseService
 
         try {
             DB::beginTransaction();
-            $fileResponse = $this->cloudinary->uploadFile($request, 'cinema');
-            $fileResponseData = $fileResponse->getData(true);
-
-            $data['image_url'] = $fileResponseData['url'];
-            $data['image_key'] = $fileResponseData['public_id'];
-
-            $cinema = $this->cinema->store($data);
+            $seat = $this->seat->store($data);
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'data' => $cinema,
-                'message' => 'Cinema created successfully'
+                'data' => $seat,
+                'message' => 'Seat created successfully'
             ], StatusCode::HTTP_CREATED);
         } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create cinema',
+                'message' => 'Failed to create seat',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -65,32 +57,23 @@ class CinemaService extends BaseService
     public function update(Request $request, $id)
     {
         $data = $request->only($this->model->getFillable());
-        
+
         try {
-
             DB::beginTransaction();
-            if ($request->hasFile('file')) {
-                $fileResponse = $this->cloudinary->updateUploadFile($request, $data['image_key'], 'cinema');
-                $fileResponseData = $fileResponse->getData(true);
-
-                $data['image_url'] = $fileResponseData['url'];
-                $data['image_key'] = $fileResponseData['public_id'];
-            }
-
-            $cinema = $this->cinema->update($data, $id);
+            $seat = $this->seat->update($data, $id);
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'data' => $cinema,
-                'message' => 'Cinema updated successfully'
+                'data' => $seat,
+                'message' => 'Seat updated successfully'
             ], StatusCode::HTTP_OK);
         } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update cinema',
+                'message' => 'Failed to update seat',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -99,17 +82,17 @@ class CinemaService extends BaseService
     public function show($id)
     {
         try {
-            $cinema = $this->cinema->show($id);
+            $seat = $this->seat->show($id);
 
             return response()->json([
                 'success' => true,
-                'data' => $cinema,
-                'message' => 'Cinema retrieved successfully'
+                'data' => $seat,
+                'message' => 'Seat retrieved successfully'
             ], StatusCode::HTTP_OK);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Cinema not found',
+                'message' => 'Seat not found',
                 'error' => $e->getMessage()
             ], StatusCode::HTTP_NOT_FOUND);
         }
