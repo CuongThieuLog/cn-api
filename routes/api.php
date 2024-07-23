@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\MovieFormatController as AdminMovieFormatControll
 use App\Http\Controllers\Admin\MovieTypeController as AdminMovieTypeController;
 use App\Http\Controllers\Admin\PersonController as AdminPersonController;
 use App\Http\Controllers\Admin\PersonMovieController as AdminPersonMovieController;
+use App\Http\Controllers\Admin\CinemaController as AdminCinemaController;
 
 // User
 use App\Http\Controllers\User\AuthController;
@@ -17,8 +18,8 @@ use App\Http\Controllers\User\MovieFormatController;
 use App\Http\Controllers\User\MovieTypeController;
 use App\Http\Controllers\User\PersonController;
 use App\Http\Controllers\User\PersonMovieController;
+use App\Http\Controllers\User\CinemaController;
 
-use App\Http\Controllers\Admin\CinemaController;
 use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\FoodController;
 use App\Http\Controllers\Admin\ScheduleController;
@@ -69,7 +70,8 @@ Route::prefix('user')->group(function () {
         Route::apiResource('movie-format', MovieFormatController::class)->only(['index', 'show']);
         Route::apiResource('movie-type', MovieTypeController::class)->only(['index', 'show']);
         Route::apiResource('person', PersonController::class)->only(['index', 'show']);
-        Route::apiResource('person-movie', PersonMovieController::class);
+        Route::apiResource('person-movie', PersonMovieController::class)->only(['index', 'show']);
+        Route::apiResource('cinema', CinemaController::class)->only(['index', 'show']);
     });
 });
 
@@ -91,8 +93,8 @@ Route::prefix('admin')->group(function () {
         Route::apiResource('movie-format', AdminMovieFormatController::class);
         Route::apiResource('person', AdminPersonController::class);
         Route::apiResource('person-movie', AdminPersonMovieController::class);
+        Route::apiResource('cinema', AdminCinemaController::class);
         
-        Route::apiResource('cinema', CinemaController::class);
         Route::apiResource('screen', ScreenController::class);
         Route::apiResource('food', FoodController::class);
         Route::apiResource('seat', SeatController::class);
