@@ -8,8 +8,9 @@ use App\Http\Controllers\BaseController;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Services\AuthService;
+use App\Jobs\SendVerificationEmail;
+use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -40,7 +41,7 @@ class AuthController extends BaseController
             'user' => $user,
         ];
 
-        event(new Registered($user));
+        SendVerificationEmail::dispatch($user);
 
         return response()->json([
             'success' => true,
@@ -119,15 +120,29 @@ class AuthController extends BaseController
         ], StatusCode::HTTP_OK);
     }
 
-    public function verify(Request $request)
+    public function verify(Request $request, $id, $hash)
     {
-        $user = $request->user();
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found.'
+            ], StatusCode::HTTP_NOT_FOUND);
+        }
+
+        if (!hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid verification link.'
+            ], StatusCode::HTTP_BAD_REQUEST);
+        }
 
         if ($user->hasVerifiedEmail()) {
             return response()->json([
-                'success' => true,
-                'message' => 'Email already verified.'
-            ], StatusCode::HTTP_OK);
+                'success' => false,
+                'message' => 'Email address already verified.'
+            ], StatusCode::HTTP_BAD_REQUEST);
         }
 
         if ($user->markEmailAsVerified()) {
@@ -136,7 +151,7 @@ class AuthController extends BaseController
 
         return response()->json([
             'success' => true,
-            'message' => 'Email has been verified.'
+            'message' => 'Email verified successfully.'
         ], StatusCode::HTTP_OK);
     }
 
@@ -146,16 +161,16 @@ class AuthController extends BaseController
 
         if ($user->hasVerifiedEmail()) {
             return response()->json([
-                'success' => true,
-                'message' => 'Email already verified.'
-            ], StatusCode::HTTP_OK);
+                'success' => false,
+                'message' => 'Email address already verified.'
+            ], StatusCode::HTTP_BAD_REQUEST);
         }
 
         $user->sendEmailVerificationNotification();
 
         return response()->json([
             'success' => true,
-            'message' => 'Verification email sent.'
+            'message' => 'Verification email resent.'
         ], StatusCode::HTTP_OK);
     }
 }
