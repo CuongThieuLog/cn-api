@@ -32,4 +32,19 @@ class CommentRepository implements CommentInterface
     {
         return $this->comment->findOrFail($id);
     }
+
+    public function storeReply($data, $parentId)
+    {
+        $parentComment = $this->comment->findOrFail($parentId);
+        $reply = $parentComment->replies()->create($data);
+
+        return $reply;
+    }
+
+    public function getReplies($parentId)
+    {
+        $parentComment = $this->comment->findOrFail($parentId);
+
+        return $parentComment->replies;
+    }
 }

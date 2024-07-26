@@ -9,4 +9,8 @@ interface CommentInterface
     public function update($data, $id);
 
     public function show($id);
+
+    public function storeReply($data, $parentId);
+
+    public function getReplies($parentId);
 }

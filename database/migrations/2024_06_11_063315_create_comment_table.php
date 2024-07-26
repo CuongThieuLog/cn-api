@@ -16,8 +16,9 @@ return new class extends Migration
             $table->text('content');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('movie_id');
+            $table->bigInteger('parent_id')->unsigned()->nullable();
             $table->integer('star');
-            $table->string('felling');
+            $table->string('feeling');
             $table->string('image');
             $table->timestamps();
 

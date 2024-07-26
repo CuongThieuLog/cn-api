@@ -19,8 +19,8 @@ use App\Http\Controllers\User\MovieTypeController;
 use App\Http\Controllers\User\PersonController;
 use App\Http\Controllers\User\PersonMovieController;
 use App\Http\Controllers\User\CinemaController;
+use App\Http\Controllers\User\CommentController;
 
-use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\FoodController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\ScreenController;
@@ -72,6 +72,10 @@ Route::prefix('user')->group(function () {
         Route::apiResource('person', PersonController::class)->only(['index', 'show']);
         Route::apiResource('person-movie', PersonMovieController::class)->only(['index', 'show']);
         Route::apiResource('cinema', CinemaController::class)->only(['index', 'show']);
+        Route::apiResource('comment', CommentController::class);
+        Route::apiResource('comment', CommentController::class);
+        Route::post('/comment/{commentId}/replies', [CommentController::class, 'storeReply']);
+        Route::get('/comment/{commentId}/replies', [CommentController::class, 'showReplies']);
     });
 });
 

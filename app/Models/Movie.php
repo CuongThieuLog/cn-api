@@ -38,4 +38,9 @@ class Movie extends Model
     {
         return $this->belongsTo(MovieFormat::class);
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class)->whereNull('parent_id')->latest();
+    }
 }

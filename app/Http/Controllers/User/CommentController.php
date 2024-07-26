@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\CommentRequest;
 use App\Http\Services\CommentService;
+use Illuminate\Http\Request;
 
 class CommentController extends BaseController
 {
@@ -26,5 +27,15 @@ class CommentController extends BaseController
     public function show($id)
     {
         return $this->service->show($id);
+    }
+
+    public function storeReply(Request $request, $commentId)
+    {
+        return $this->service->storeReply($request, $commentId);
+    }
+
+    public function showReplies($commentId)
+    {
+        return $this->service->showReplies($commentId);
     }
 }
