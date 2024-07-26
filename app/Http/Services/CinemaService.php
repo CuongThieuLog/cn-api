@@ -40,7 +40,7 @@ class CinemaService extends BaseService
             $fileResponse = $this->cloudinary->uploadFile($request, 'cn');
             $fileResponseData = $fileResponse->getData(true);
 
-            $data['image'] = $fileResponseData['public_id'];
+            $data['image'] = $fileResponseData['url'];
 
             $cinema = $this->cinema->store($data);
             DB::commit();
@@ -72,7 +72,7 @@ class CinemaService extends BaseService
                 $fileResponse = $this->cloudinary->updateUploadFile($request, $data['image_key'], 'cn');
                 $fileResponseData = $fileResponse->getData(true);
 
-                $data['image'] = $fileResponseData['public_id'];
+                $data['image'] = $fileResponseData['url'];
             }
 
             $cinema = $this->cinema->update($data, $id);
@@ -98,8 +98,6 @@ class CinemaService extends BaseService
     {
         try {
             $cinema = $this->cinema->show($id);
-
-            $cinema['url'] = $this->cloudinary->getFileUrl($cinema['image']);
 
             return response()->json([
                 'success' => true,
