@@ -9,6 +9,19 @@ use Illuminate\Support\Facades\Log;
 
 class CloudinaryService
 {
+    public function getFileUrl($publicId)
+    {
+        try {
+            $url = Cloudinary::getUrl($publicId);
+
+            return $url;
+        } catch (\Exception $e) {
+            Log::error('Error in ' . __METHOD__ . ': ' . $e->getMessage());
+
+            return null;
+        }
+    }
+
     public function uploadFile(Request $request, $folder)
     {
         try {

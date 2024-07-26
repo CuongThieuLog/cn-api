@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('address');
-            $table->string('image_url');
-            $table->string('image_key');
+            $table->string('image');
             $table->string('phone');
             $table->boolean('is_active')->default(true);
             $table->timestamps();

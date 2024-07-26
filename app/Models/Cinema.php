@@ -14,8 +14,7 @@ class Cinema extends Model
     protected $fillable = [
         'name',
         'address',
-        'image_url',
-        'image_key',
+        'image',
         'phone',
         'is_active',
     ];
