@@ -38,6 +38,10 @@ Route::prefix('user')->group(function () {
     Route::prefix('auth')->group(function () {
         Route::post('register', [AuthController::class, 'register']);
         Route::post('login', [AuthController::class, 'login']);
+        Route::get('email/verify/{id}/{hash}', [AuthController::class, 'verify'])->name('verification.verify');
+        Route::post('email/resend', [AuthController::class, 'resendVerificationEmail']);
+        Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
+        Route::post('reset-password', [AuthController::class, 'resetPassword']);
 
         Route::get('google/callback', [GoogleController::class, 'handleGoogleCallback']);
         Route::get('google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
@@ -49,8 +53,6 @@ Route::prefix('user')->group(function () {
             Route::post('refresh-token', [AuthController::class, 'refreshToken']);
             Route::post('logout', [AuthController::class, 'logout']);
             Route::get('me', [AuthController::class, 'me']);
-            Route::get('email/verify/{id}/{hash}', [AuthController::class, 'verify'])->name('verification.verify');
-            Route::post('email/resend', [AuthController::class, 'resendVerificationEmail'])->name('verification.resend');
         });
     });
 

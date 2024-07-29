@@ -5,15 +5,19 @@ namespace App\Http\Controllers\User;
 use App\Enums\StatusCode;
 use App\Enums\TokenAbility;
 use App\Http\Controllers\BaseController;
+use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Services\AuthService;
+use App\Jobs\SendForgotPasswordEmail;
 use App\Jobs\SendVerificationEmail;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Password;
 
 class AuthController extends BaseController
 {
@@ -157,20 +161,82 @@ class AuthController extends BaseController
 
     public function resendVerificationEmail(Request $request)
     {
-        $user = $request->user();
+        $request->validate([
+            'email' => 'required|email'
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found'
+            ], StatusCode::HTTP_NOT_FOUND);
+        }
 
         if ($user->hasVerifiedEmail()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Email address already verified.'
+                'message' => 'Email address already verified'
             ], StatusCode::HTTP_BAD_REQUEST);
         }
 
-        $user->sendEmailVerificationNotification();
+        SendVerificationEmail::dispatch($user);
 
         return response()->json([
             'success' => true,
-            'message' => 'Verification email resent.'
+            'message' => 'Verification email sent. Please check your email.'
+        ], StatusCode::HTTP_OK);
+    }
+
+    public function forgotPassword(ForgotPasswordRequest $request)
+    {
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found'
+            ], StatusCode::HTTP_NOT_FOUND);
+        }
+
+        $token = Password::createToken($user);
+        $resetLink = url("password/reset/{$token}");
+
+        SendForgotPasswordEmail::dispatch($user, $resetLink);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Reset password link sent to your email'
+        ], StatusCode::HTTP_OK);
+    }
+
+    public function resetPassword(ResetPasswordRequest $request)
+    {
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found'
+            ], StatusCode::HTTP_NOT_FOUND);
+        }
+
+        if (!Password::tokenExists($user, $request->token)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid or expired token'
+            ], StatusCode::HTTP_BAD_REQUEST);
+        }
+
+        $user->password = bcrypt($request->password);
+        $user->save();
+
+        Password::deleteToken($user);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password has been reset successfully'
         ], StatusCode::HTTP_OK);
     }
 }
