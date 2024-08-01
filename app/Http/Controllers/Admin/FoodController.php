@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\FoodRequest;
-use App\Http\Services\Admin\FoodService;
+use App\Http\Services\FoodService;
 
 class FoodController extends BaseController
 {

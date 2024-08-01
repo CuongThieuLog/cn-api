@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\SeatRequest;
-use App\Http\Services\Admin\SeatService;
+use App\Http\Services\SeatService;
 
 class SeatController extends BaseController
 {

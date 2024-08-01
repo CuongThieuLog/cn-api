@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\TicketRequest;
-use App\Http\Services\Admin\TicketService;
+use App\Http\Services\TicketService;
 
 class TicketController extends BaseController
 {

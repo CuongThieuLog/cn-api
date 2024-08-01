@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\ScreenRequest;
-use App\Http\Services\Admin\ScreenService;
+use App\Http\Services\ScreenService;
 
 class ScreenController extends BaseController
 {

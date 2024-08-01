@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\TicketFoodRequest;
-use App\Http\Services\Admin\TicketFoodService;
+use App\Http\Services\TicketFoodService;
 
 class TicketFoodController extends BaseController
 {

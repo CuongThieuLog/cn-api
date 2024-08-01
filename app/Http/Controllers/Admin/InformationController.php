@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\InformationRequest;
-use App\Http\Services\Admin\InformationService;
+use App\Http\Services\InformationService;
 
 class MovieFormatController extends BaseController
 {

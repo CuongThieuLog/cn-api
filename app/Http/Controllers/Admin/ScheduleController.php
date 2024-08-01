@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\ScheduleRequest;
-use App\Http\Services\Admin\ScheduleService;
+use App\Http\Services\ScheduleService;
 
 class ScheduleController extends BaseController
 {
